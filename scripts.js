@@ -63,19 +63,19 @@ window.addEventListener("load", function () {
     let bkgWidth = parseInt(
       window.getComputedStyle(shuttleBackground).getPropertyValue("width")
     );
-    console.log(bkgWidth);
+    // console.log(bkgWidth);
 
     if (flightStatus.innerHTML === "Shuttle in flight") {
-      if (event.target.id === "left" && rocketPosX > -(bkgWidth / 2) - 40) {
-        // console.log(rocket.style.left)   // outputting an empty string
-        // rocket.style.left -=
+      if (event.target.id === "left" && rocketPosX > -(bkgWidth / 2 - 40)) {
         rocketPosX -= 10;
         rocket.style.marginLeft = rocketPosX + "px";
+        // console.log(rocketPosX); // debugging
       }
 
-      if (event.target.id === "right") {
+      if (event.target.id === "right" && rocketPosX < bkgWidth / 2 - 37) {
         rocketPosX += 10;
         rocket.style.marginLeft = rocketPosX + "px";
+        // console.log(rocketPosX);  // debugging
       }
 
       if (event.target.id === "up" && altitude < 250000) {
