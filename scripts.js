@@ -6,89 +6,100 @@ window.addEventListener("load", function () {
   const landingButton = this.document.getElementById("landing");
   const abortButton = this.document.getElementById("missionAbort");
 
-  const leftButton = this.document.getElementById("left");
-  const rightButton = this.document.getElementById("right");
-  const upButton = this.document.getElementById("up");
-  const downButton = this.document.getElementById("down");
-
   let rocketPosX = 0;
   let rocketPosY = 0;
+  let altitude = 0;
 
   const flightStatus = document.getElementById("flightStatus");
   const shuttleBackground = document.getElementById("shuttleBackground");
   const rocket = document.getElementById("rocket");
-  const altitude = document.getElementById("spaceShuttleHeight");
-
-//   console.log(altitude);
-// console.log(shuttleBackground.style.height);
-// console.dir(rocket);
-// rocket.style.top = "90%";
+  const spaceShuttleHeight = document.getElementById("spaceShuttleHeight");
 
   takeOffButton.addEventListener("click", function () {
-    let shouldTakeoff = window.confirm(
-      "Confirm that the shuttle is ready for takeoff."
-    );
+    if (flightStatus.innerHTML !== "Shuttle in flight") {
+      let shouldTakeoff = window.confirm(
+        "Confirm that the shuttle is ready for takeoff."
+      );
 
-    if (shouldTakeoff) {
-      flightStatus.innerHTML = "Shuttle in flight";
-      shuttleBackground.style.backgroundColor = "blue";
-      altitude.innerHTML = 10000;
+      if (shouldTakeoff) {
+        flightStatus.innerHTML = "Shuttle in flight";
+        shuttleBackground.style.backgroundColor = "blue";
+        rocketPosY = 10;
+        altitude = 10000;
+        rocket.style.marginBottom = rocketPosY + "px";
+        spaceShuttleHeight.innerHTML = altitude;
+      }
     }
   });
 
   landingButton.addEventListener("click", function () {
-    flightStatus.innerHTML = "The shuttle is landing. Landing gear engaged.";
-    shuttleBackground.style.backgroundColor = "green";
-    altitude.innerHTML = 0;
-    resetRocket();
-  });
-
-  //TODO update these this!!
-  abortButton.addEventListener("click", function () {
-    let shouldAbort = confirm("Confirm that you want to abort the mission.");
-
-    if (shouldAbort) {
+    if (flightStatus.innerHTML === "Shuttle in flight") {
       flightStatus.innerHTML = "The shuttle is landing. Landing gear engaged.";
       shuttleBackground.style.backgroundColor = "green";
+      spaceShuttleHeight.innerHTML = 0;
       resetRocket();
     }
   });
 
-  // event delegation - event.target lets us look at what has been clicked on so we can avoid making click events for each button.
+  //TODO update these this!!
+  abortButton.addEventListener("click", function () {
+    if (flightStatus.innerHTML === "Shuttle in flight") {
+      let shouldAbort = confirm("Confirm that you want to abort the mission.");
+
+      if (shouldAbort) {
+        flightStatus.innerHTML =
+          "The shuttle is landing. Landing gear engaged.";
+        shuttleBackground.style.backgroundColor = "green";
+        resetRocket();
+      }
+    }
+  });
+
+  // event delegation - event.target lets us look at what has been clicked on so we
+  // can avoid making click events for each button.
   this.document.addEventListener("click", function (event) {
-    console.log(event.target.id);
+    // console.log(event.target.id);
 
     let bkgWidth = parseInt(
       window.getComputedStyle(shuttleBackground).getPropertyValue("width")
     );
+    console.log(bkgWidth);
 
-    if (event.target.id === "left" && rocketPosX > -(bkgWidth / 2) - 40) {
-      // console.log(rocket.style.left)   // outputting an empty string
-      // rocket.style.left -=
-      rocketPosX -= 10;
-      rocket.style.marginLeft = rocketPosX + "px";
+    if (flightStatus.innerHTML === "Shuttle in flight") {
+      if (event.target.id === "left" && rocketPosX > -(bkgWidth / 2) - 40) {
+        // console.log(rocket.style.left)   // outputting an empty string
+        // rocket.style.left -=
+        rocketPosX -= 10;
+        rocket.style.marginLeft = rocketPosX + "px";
+      }
+
+      if (event.target.id === "right") {
+        rocketPosX += 10;
+        rocket.style.marginLeft = rocketPosX + "px";
+      }
+
+      if (event.target.id === "up" && altitude < 250000) {
+        rocketPosY += 10;
+        rocket.style.marginBottom = rocketPosY + "px";
+        altitude += 10000;
+        spaceShuttleHeight.innerHTML = altitude;
     }
-
-    if (event.target.id === "right") {
-      rocketPosX += 10;
-      rocket.style.marginLeft = rocketPosX + "px";
+    
+    if (event.target.id === "down" && altitude > 10000) {
+        rocketPosY -= 10;
+        rocket.style.marginBottom = rocketPosY + "px";
+        altitude -= 10000;
+        spaceShuttleHeight.innerHTML = altitude;
     }
-
-    if (event.target.id === "up" && altitude < 25000) {
-      rocketPosX += 10;
-      rocket.style.marginLeft = rocketPosY + "px";
-    }
-
-    if (event.target.id === "down") {
-      rocketPosX -= 10;
-      rocket.style.marginLeft = rocketPosY + "px";
     }
   });
 
   function resetRocket() {
     rocketPosY = 0;
     rocketPosX = 0;
-    altitude.innerHTML = 0;
+    altitude = 0;
+    spaceShuttleHeight.innerHTML = 0;
     rocket.style.marginBottom = 0;
+    rocket.style.marginLeft = 0;
   }
 });
